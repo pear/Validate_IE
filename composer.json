@@ -1,0 +1,36 @@
+{
+    "authors": [
+        {
+            "email": "davidc@agoraproduction.com",
+            "name": "David Coallier",
+            "role": "Lead"
+        },
+        {
+            "email": "ken@linux.ie",
+            "name": "Ken Guest",
+            "role": "Lead"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Validate_IE": "./"
+        }
+    },
+    "description": "Validation class for Ireland",
+    "include-path": [
+        "./"
+    ],
+    "license": "LGPL",
+    "name": "pear/validate_ie",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Validate_IE",
+        "source": "https://github.com/pear/Validate_IE"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}

@@ -98,13 +98,13 @@ class Validate_IE
      * require_once('Validate/IE.php');
      *
      * $phoneNumber = '+353 1 213 4567';
-     * if ( Validate_IE::phoneNumber($phoneNumber) ) {
+     * if (Validate_IE::phoneNumber($phoneNumber) ) {
      *     print 'Valid';
      * } else {
      *     print 'Not valid!';
      * }
      * $phoneNumber = '213 4567';
-     * if ( Validate_IE::phoneNumber($phoneNumber, false) ) {
+     * if (Validate_IE::phoneNumber($phoneNumber, false) ) {
      *     print 'Valid';
      * } else {
      *     print 'Not valid!';
@@ -442,15 +442,22 @@ class Validate_IE
      */
     function checkMOD23($value)
     {
+        $len = strlen($value);
         $total = 0;
-        for ($i = 0;$i<7;++$i) {
-            $total += (int)$value[$i]*(8-$i);
+        for ($i = 0; $i < 7; ++$i) {
+            $total += (int) $value[$i] * (8 - $i);
         }
-        $mod = ($total%23);
+
+        if ($len == 9) {
+            $total += (ord($value[8]) - 64) * 9;
+        }
+
+        $mod = ($total % 23);
         if ($mod === 0) {
             $mod = 23;
         }
-        return (int) (chr(64+$mod) == strtoupper($value[7]));
+
+        return (int) (chr(64 + $mod) == strtoupper($value[7]));
 
     }
     // }}}
@@ -469,7 +476,7 @@ class Validate_IE
      */
     function ppsn($ppsn)
     {
-        $preg = "/^[0-9]{7}[A-Z]$/";
+        $preg = "/^[0-9]{7}[A-Z]{1,2}$/";
 
         if (preg_match($preg, $ppsn)) {
             //return (true);
@@ -499,7 +506,7 @@ class Validate_IE
      * require_once('Validate/IE.php');
      *
      * $vat = 'IE6335315A';
-     * if ( Validate_IE::vatNumber($vat) ) {
+     * if (Validate_IE::vatNumber($vat) ) {
      *     print 'Valid';
      * } else {
      *     print 'Not valid!';

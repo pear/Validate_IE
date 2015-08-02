@@ -61,8 +61,8 @@ class Validate_IE
      * @param string $iban  The account number to be validated
      * @param string $swift swift code to compare against IBAN
      *
-     * @return    bool
-     * @access  public
+     * @return bool
+     * @access public
      */
     function IBAN($iban, $swift = false)
     {
@@ -277,6 +277,42 @@ class Validate_IE
         return in_array($postalCode, $postcodes);
     }
     // }}}
+    // {{{ public function eircode
+    /**
+     * Validate an Eircode; Ireland's postcode/zipcode.
+     *
+     * @param string $eircode The post code to validate
+     * @param string $dir     optional; /path/to/data/dir
+     *
+     * @return bool
+     */
+    public function eircode($eircode, $dir = null)
+    {
+        // Remove non alpha-numeric characters
+        $code = preg_replace('/[^A-Z0-9]/', '', strtoupper($eircode));
+        if (strlen($code) != 7) {
+            return false;
+        }
+        $routing = substr($code, 0, 3);
+        $identifier = substr($code, 3);
+        if ($dir != null && (is_file($dir . '/IE_EircodeRoutingKeys.txt'))) {
+            $file = $dir . '/IE_EircodeRoutingKeys.txt';
+        } else {
+            $file = '@DATADIR@/Validate_IE/data/IE_EircodeRoutingKeys.txt';
+        }
+        $routingKeys = array_map('trim', file($file));
+        if (!in_array($routing, $routingKeys)) {
+            return false;
+        }
+        // not included BGIJLMOQSUZ
+        $preg = "/^[AC-FHKNPRTV-Y0-9]{4}$/";
+        if (preg_match($preg, $identifier)) {
+            return true;
+        }
+
+        return false;
+    }
+    // }}}
     // {{{ public function passport
     /**
      * Validate passport
@@ -308,8 +344,8 @@ class Validate_IE
      *
      * @param string $dl The drivers licence to validate
      *
-     * @access    public
-     * @return    bool   true if it validates false if it doesn't.
+     * @access public
+     * @return bool   true if it validates false if it doesn't.
      */
     function drive($dl)
     {
@@ -420,10 +456,10 @@ class Validate_IE
      *
      * @param string $ssn ssn number to validate
      *
-     * @link http://en.wikipedia.org/wiki/Personal_Public_Service_Number
-     * @access  public
-     * @see     Validate_IE::ppsn()
-     * @return  bool    Returns true on success, false otherwise
+     * @link   http://en.wikipedia.org/wiki/Personal_Public_Service_Number
+     * @access public
+     * @see    Validate_IE::ppsn()
+     * @return bool    Returns true on success, false otherwise
      */
     function ssn($ssn)
     {
@@ -470,9 +506,9 @@ class Validate_IE
      *
      * @param string $ppsn Personal Public Service Number
      *
-     * @access  public
-     * @return  bool    Returns true on success, false otherwise
-     * @link    http://en.wikipedia.org/wiki/Personal_Public_Service_Number
+     * @access public
+     * @return bool    Returns true on success, false otherwise
+     * @link   http://en.wikipedia.org/wiki/Personal_Public_Service_Number
      */
     function ppsn($ppsn)
     {
@@ -498,7 +534,7 @@ class Validate_IE
      *
      * @param string $vat vat number to validate.
      *
-     * @access  public
+     * @access public
      *
      * <code>
      * <?php
@@ -515,9 +551,9 @@ class Validate_IE
      * ?>
      * </code>
      *
-     * @return  bool            Returns true on success, false otherwise
-     * @link    http://www.iecomputersystems.com/ordering/eu_vat_numbers.htm
-     * @link    http://www.braemoor.co.uk/software/vat.shtml
+     * @return bool Returns true on success, false otherwise
+     * @link   http://www.iecomputersystems.com/ordering/eu_vat_numbers.htm
+     * @link   http://www.braemoor.co.uk/software/vat.shtml
      */
     function vatNumber($vat)
     {

@@ -268,10 +268,13 @@ class Validate_IE
         $postalCode = strtoupper(str_replace(' ', '', trim($postalCode)));
         $postalCode = str_replace('DUBLIN', 'D', $postalCode);
 
-        if ($dir != null && (is_file($dir . '/IE_postcodes.txt'))) {
-            $file = $dir . '/IE_postcodes.txt';
+        if ($dir != null && (is_file($dir . '/IE_postalcodes.txt'))) {
+            $file = $dir . '/IE_postalcodes.txt';
         } else {
-            $file = '@DATADIR@/Validate_IE/data/IE_postcodes.txt';
+            $file = '@DATADIR@/Validate_IE/data/IE_postalcodes.txt';
+            if (strpos($file, '@') === 0) {
+                $file = '../data/IE_postalcodes.txt';
+            }
         }
         $postcodes = array_map('trim', file($file));
         return in_array($postalCode, $postcodes);
@@ -299,6 +302,9 @@ class Validate_IE
             $file = $dir . '/IE_EircodeRoutingKeys.txt';
         } else {
             $file = '@DATADIR@/Validate_IE/data/IE_EircodeRoutingKeys.txt';
+            if (strpos($file, '@') === 0) {
+                $file = '../data/IE_EircodeRoutingKeys.txt';
+            }
         }
         $routingKeys = array_map('trim', file($file));
         if (!in_array($routing, $routingKeys)) {

@@ -382,13 +382,38 @@ class Validate_IE
             //check valid index mark
             $marks = array('C','CE','CN','CW','D','DL','G','KE','KK','KY','L',
                            'LD','LH','LK','LM','LS','MH','MN','MO','OY','RN',
-                           'SO','TN','TS','W','WD','WH','WX','WW');
+                           'SO','T', 'TN','TS','W','WD','WH','WX','WW');
             if (in_array($mark, $marks)) {
-                // The first component, if 3 digits in length can only end
-                // with a '1' or a '2'.
-                if (strlen($matches[1]) == 3) {
-                    $end  = (int) substr($matches[1], 2, 1);
-                    return ($end == 1) || ($end == 2);
+                // These were only used up to 2014.
+                if ('TS' === $mark
+                    || 'TN' === $mark
+                    || 'LK' === $mark
+                    || 'WD' === $mark
+                ) {
+                    return ((int) $matches[1] < 141);
+                }
+                // Introduced in 2014.
+                if ('T' === $mark) {
+                    return ((int) $matches[1] >= 141);
+                }
+
+                /*
+                 * Year Segment is 2 digits for 1987 to 2012.
+                 * For years later than 2012, the segment is 3 digits in length.
+                 */
+                if (strlen($matches[1]) == 2) {
+                    $year = (int) $matches[1];
+                    return ($year >= 87 || $year <= 12);
+                } elseif (strlen($matches[1]) == 3) {
+                    $year = (int) substr($matches[1], 0, 2);
+                    if ($year >= 87 || $year <= 12) {
+                        return false;
+                    } else {
+                        // The year segment, if 3 digits in length can only end
+                        // with a '1' or a '2'.
+                        $end  = (int) substr($matches[1], 2, 1);
+                        return ($end === 1) || ($end === 2);
+                    }
                 }
                 return true;
             } else {

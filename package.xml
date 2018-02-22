@@ -27,19 +27,19 @@
   <email>ken@linux.ie</email>
   <active>yes</active>
  </lead>
- <date>2015-08-02</date>
- <time>23:11:00</time>
+ <date>2018-02-22</date>
+ <time>00:24:00</time>
  <version>
-  <release>1.1.0a3</release>
+  <release>1.1.0</release>
   <api>1.0.1</api>
  </version>
  <stability>
-  <release>alpha</release>
-  <api>alpha</api>
+  <release>stable</release>
+  <api>stable</api>
  </stability>
  <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
  <notes>
-* Add validation for Eircodes.
+* Improve validation for licence plate registrations in relation to 3 digit year segments, index mark codes etc.
  </notes>
  <contents>
   <dir name="/">
@@ -64,10 +64,10 @@
  <dependencies>
   <required>
    <php>
-    <min>4.4.0</min>
+    <min>5.6.33</min>
    </php>
    <pearinstaller>
-    <min>1.4.0b1</min>
+    <min>1.10.5</min>
    </pearinstaller>
    <package>
     <name>Validate_Finance</name>
@@ -78,6 +78,21 @@
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.1.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2018-02-22</date>
+   <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
+   <notes>
+* Improve validation for licence plate registrations in relation to 3 digit year segments, index mark codes etc.
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.1.0a3</release>

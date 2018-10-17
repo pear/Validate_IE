@@ -49,7 +49,7 @@ class Validate_IE
      * @static
      * @access public
      */
-    function swift($swift)
+    public function swift($swift)
     {
         return preg_match('/^[a-z0-9]{4}IE[a-z0-9]{2}$/i', $swift);
     }
@@ -64,7 +64,7 @@ class Validate_IE
      * @return bool
      * @access public
      */
-    function IBAN($iban, $swift = false)
+    public function IBAN($iban, $swift = false)
     {
         if ($swift) {
             $swift = substr($swift, 0, 4);
@@ -117,7 +117,7 @@ class Validate_IE
      * @return bool   true if number is valid, false if not.
      * @static
      */
-    function phoneNumber($number, $requiredAreaCode = true)
+    public function phoneNumber($number, $requiredAreaCode = true)
     {
         /*
          * categorize prefixes into landline, mobile and 'other'
@@ -128,7 +128,7 @@ class Validate_IE
          *       district phone numbers etc.
          */
         static $defaultRegExp = '/^\d{7,10}$/';
-        static $irishLandLine = array(
+        static $irishLandLine = [
                 '1'=>'/^01\d{7}$/',
                 '21'=>'', '22'=>'', '23'=>'', '24'=>'', '25'=>'', '242'=>'',
                 '225'=>'', '26'=>'', '27'=>'', '28'=>'', '29'=>'', '402'=>'',
@@ -146,27 +146,27 @@ class Validate_IE
                 '74'=>'',
                 '818'=>'/^0818[0-9]{6}$/',
                 '90'=>'', '91'=>'', '92'=>'', '93'=>'', '94'=>'', '95'=>'',
-                '96'=>'', '97'=>'', '98'=>'', '99'=>'');
-        static $irishMobileAreas = array('83'=>'/^083[0-9]{7}$/',
+                '96'=>'', '97'=>'', '98'=>'', '99'=>''];
+        static $irishMobileAreas = ['83'=>'/^083[0-9]{7}$/',
                                            '85'=>'/^085[0-9]{7}$/',
                                            '86'=>'/^086[0-9]{7}$/',
                                            '87'=>'/^087[0-9]{7}$/',
                                            '88'=>'/^088[0-9]{7}$/',
-                                           '89'=>'/^089[0-9]{7}$/');
-        static $irishMobileAreasVoiceMail = array('83'=>'/^0835[0-9]{7}$/',
+                                           '89'=>'/^089[0-9]{7}$/'];
+        static $irishMobileAreasVoiceMail = ['83'=>'/^0835[0-9]{7}$/',
                                            '85'=>'/^0855[0-9]{7}$/',
                                            '86'=>'/^0865[0-9]{7}$/',
                                            '87'=>'/^0875[0-9]{7}$/',
                                            '88'=>'/^0885[0-9]{7}$/',
-                                           '89'=>'/^0895[0-9]{7}$/');
-        static $irishOtherRates = array('1800'=>'/^1800[0-9]{6}$/',
+                                           '89'=>'/^0895[0-9]{7}$/'];
+        static $irishOtherRates = ['1800'=>'/^1800[0-9]{6}$/',
                                           '1850'=>'/^1850[0-9]{6}$/',
-                                          '1890'=>'/^1890[0-9]{6}$/');
+                                          '1890'=>'/^1890[0-9]{6}$/'];
 
         if (preg_match('/^00.*$/', $number)) {
             $number = '+' . substr($number, 2);
         }
-        $number = str_replace(array('(', ')', '-', '+', '.', ' '), '', $number);
+        $number = str_replace(['(', ')', '-', '+', '.', ' '], '', $number);
         //remove country code for Ireland and insert leading zero of area code.
         //presence of area code is implied if country code is present.
         if (strpos($number, '353') === 0) {
@@ -263,7 +263,7 @@ class Validate_IE
      * @link   http://en.wikipedia.org/wiki/List_of_Dublin_postal_districts
      * @return bool    true if postcode is ok, false otherwise
      */
-    function postalCode($postalCode, $dir = null)
+    public function postalCode($postalCode, $dir = null)
     {
         $postalCode = strtoupper(str_replace(' ', '', trim($postalCode)));
         $postalCode = str_replace('DUBLIN', 'D', $postalCode);
@@ -330,7 +330,7 @@ class Validate_IE
      * @access public
      * @return bool   If the passport number is valid or not.
      */
-    function passport($pp)
+    public function passport($pp)
     {
         $pp   = strtolower($pp);
         $preg = "/^[a-z]{2}[0-9]{7}$/";
@@ -353,9 +353,9 @@ class Validate_IE
      * @access public
      * @return bool   true if it validates false if it doesn't.
      */
-    function drive($dl)
+    public function drive($dl)
     {
-        $dl    = str_replace(array(' ', '-'), '', $dl);
+        $dl    = str_replace([' ', '-'], '', $dl);
         $preg  = "/^[0-9]{3}[0-9]{3}[0-9]{3}$/";
         $match = preg_match($preg, $dl) ? true : false;
 
@@ -371,7 +371,7 @@ class Validate_IE
      * @access public
      * @return bool   true on success; else false.
      */
-    function licensePlate($number)
+    public function licensePlate($number)
     {
         //in_array is case sensitive, so use strtoupper...
         $plate = strtoupper($number);
@@ -380,9 +380,9 @@ class Validate_IE
         if (preg_match($regex, $plate, $matches)) {
             $mark = strtoupper($matches[2]);
             //check valid index mark
-            $marks = array('C','CE','CN','CW','D','DL','G','KE','KK','KY','L',
+            $marks = ['C','CE','CN','CW','D','DL','G','KE','KK','KY','L',
                            'LD','LH','LK','LM','LS','MH','MN','MO','OY','RN',
-                           'SO','T', 'TN','TS','W','WD','WH','WX','WW');
+                           'SO','T', 'TN','TS','W','WD','WH','WX','WW'];
             if (in_array($mark, $marks)) {
                 // These were only used up to 2014.
                 if ('TS' === $mark
@@ -445,7 +445,7 @@ class Validate_IE
      * @access public
      * @return bool
      */
-    function sortCode($sc)
+    public function sortCode($sc)
     {
         // 6 digits expected - starting with a '9'.
         return (preg_match('/^9[0-9]{5}$/', $sc)) ? true : false;
@@ -462,11 +462,11 @@ class Validate_IE
      * @param string $noSort Don't validate the sort codes, optional (default: false)
      *
      * @access public
-     * @return bool                    true if the account validates
+     * @return bool true if the account validates
      */
-    function bankAC($ac, $noSort = false)
+    public function bankAC($ac, $noSort = false)
     {
-        $ac   = str_replace(array('-', ' '), '', $ac);
+        $ac   = str_replace(['-', ' '], '', $ac);
         $preg = "/^\d{14}$/";
 
         if ($noSort) {
@@ -492,7 +492,7 @@ class Validate_IE
      * @see    Validate_IE::ppsn()
      * @return bool    Returns true on success, false otherwise
      */
-    function ssn($ssn)
+    public function ssn($ssn)
     {
         return Validate_IE::ppsn($ssn);
     }
@@ -507,7 +507,7 @@ class Validate_IE
      * @access public
      * @return boolean
      */
-    function checkMOD23($value)
+    public function checkMOD23($value)
     {
         $len = strlen($value);
         $total = 0;
@@ -525,7 +525,6 @@ class Validate_IE
         }
 
         return (int) (chr(64 + $mod) == strtoupper($value[7]));
-
     }
     // }}}
     // {{{ public function ppsn
@@ -541,7 +540,7 @@ class Validate_IE
      * @return bool    Returns true on success, false otherwise
      * @link   http://en.wikipedia.org/wiki/Personal_Public_Service_Number
      */
-    function ppsn($ppsn)
+    public function ppsn($ppsn)
     {
         $preg = "/^[0-9]{7}[A-Z]{1,2}$/";
 
@@ -586,7 +585,7 @@ class Validate_IE
      * @link   http://www.iecomputersystems.com/ordering/eu_vat_numbers.htm
      * @link   http://www.braemoor.co.uk/software/vat.shtml
      */
-    function vatNumber($vat)
+    public function vatNumber($vat)
     {
         // IE1234567X or IE1X34567X are valid (includes one or two letters
         // either the last or second + last).
@@ -602,4 +601,3 @@ class Validate_IE
     // }}}
 }
 // }}}
-?>

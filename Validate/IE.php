@@ -170,10 +170,7 @@ class Validate_IE
 
         $number = Validate_IE::normalisePhoneNumber($number);
 
-        if (strlen(trim($number)) <= 0) {
-            return false;
-        }
-        if (!ctype_digit($number)) {
+        if (strlen(trim($number)) <= 0 || !ctype_digit($number)) {
             return false;
         }
         //area code must start with the standard 0 or a 1 for 'other rates'.
@@ -188,20 +185,21 @@ class Validate_IE
         $len = strlen($number);
 
         //if number has ten digits and a prefix it's likely a mobile phone
-        if (($requiredAreaCode) && ($len == 10)) {
-            if (Validate_IE::mobilePhoneNumber($number)) {
-                return true;
-            }
+        if ($requiredAreaCode
+            && ($len == 10)
+            && Validate_IE::mobilePhoneNumber($number)
+        ) {
+            return true;
         }
         //see if it's a mobile phone with a 'direct to voicemail' prefix.
-        if (($requiredAreaCode) && ($len == 11)) {
-            if (Validate_IE::mobileVoiceMailNumber(
+        if (($requiredAreaCode)
+            && ($len == 11)
+            && Validate_IE::mobileVoiceMailNumber(
                 $number,
-                $irishMobileAreasVoiceMail
+                $irishMobileAreas
             )
-            ) {
-                return true;
-            }
+        ) {
+            return true;
         }
 
         if (!$requiredAreaCode) {
@@ -212,10 +210,8 @@ class Validate_IE
             if (preg_match($preg, $number)) {
                 return true;
             }
-        } else {
-            if (Validate_IE::landlinePhoneNumber($number, $irishLandLine)) {
-                return true;
-            }
+        } elseif (Validate_IE::landlinePhoneNumber($number, $irishLandLine)) {
+            return true;
         }
         return false;
     }
@@ -301,15 +297,16 @@ class Validate_IE
      *
      * @param string $number        Phone number
      * @param array  $irishLandLine Irish land line prefixes
+     * @param string $defaultRegExp Default regular expression for landlines
      *
      * @return void
      */
-    public function landlinePhoneNumber($number, $irishLandLine)
+    public function landlinePhoneNumber($number, $irishLandLine, $defaultRegExp)
     {
         $ret = false;
         for ($i = 3; $i > 0; $i--) {
             $prefix = substr($number, 1, $i);
-            $preg   = "";
+            $preg = "";
             if (isset($irishLandLine[$prefix])) {
                 $preg = $irishLandLine[$prefix];
                 if ($preg == '') {
@@ -385,11 +382,7 @@ class Validate_IE
         }
         // not included BGIJLMOQSUZ
         $preg = "/^[AC-FHKNPRTV-Y0-9]{4}$/";
-        if (preg_match($preg, $identifier)) {
-            return true;
-        }
-
-        return false;
+        return preg_match($preg, $identifier);
     }
 
     /**
@@ -428,9 +421,7 @@ class Validate_IE
     {
         $dl    = str_replace([' ', '-'], '', $dl);
         $preg  = "/^[0-9]{3}[0-9]{3}[0-9]{3}$/";
-        $match = preg_match($preg, $dl) ? true : false;
-
-        return $match;
+        return preg_match($preg, $dl) ? true : false;
     }
 
     /**

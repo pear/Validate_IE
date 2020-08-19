@@ -117,87 +117,33 @@ class Validate_IE
      */
     public function phoneNumber($number, $requiredAreaCode = true)
     {
-        /*
-         * categorize prefixes into landline, mobile and 'other'
-         * each prefix has an associated regular expression.
-         * use defaultRegExp if associated entry is empty.
-         * @note Irish phone numbers are not the same as UK Phone numbers;
-         *       Irish phone numbers are much less complex as UK now has per
-         *       district phone numbers etc.
-         */
-        static $defaultRegExp = '/^\d{7,10}$/';
-        static $irishLandLine = [
-            '1'=>'/^01\d{7}$/',
-            '21'=>'', '22'=>'', '23'=>'', '24'=>'', '25'=>'', '242'=>'',
-            '225'=>'', '26'=>'', '27'=>'', '28'=>'', '29'=>'', '402'=>'',
-            '404'=>'', '405'=>'', '41'=>'', '42'=>'', '43'=>'', '44'=>'',
-            '45'=>'', '46'=>'', '47'=>'',
-            '48'=>'/^048[0-9]{8}$/', //direct dial to Northern Ireland
-            '49'=>'', '51'=>'', '52'=>'', '53'=>'', '54'=>'', '55'=>'',
-            '56'=>'', '57'=>'',
-            '58'=>'/^058[0-9]{5}$/',
-            '59'=>'/^059[0-9]{7}$/',
-            '502'=>'', '504'=>'',
-            '505'=>'/^0505[0-9]{5}$/',
-            '506'=>'', '509'=>'', '61'=>'', '62'=>'', '63'=>'', '64'=>'',
-            '65'=>'', '66'=>'', '67'=>'', '68'=>'', '69'=>'', '71'=>'',
-            '74'=>'',
-            '818'=>'/^0818[0-9]{6}$/',
-            '90'=>'', '91'=>'', '92'=>'', '93'=>'', '94'=>'', '95'=>'',
-            '96'=>'', '97'=>'', '98'=>'', '99'=>''
-        ];
-        static $irishMobileAreas = [
-            '83'=>'/^083[0-9]{7}$/',
-            '85'=>'/^085[0-9]{7}$/',
-            '86'=>'/^086[0-9]{7}$/',
-            '87'=>'/^087[0-9]{7}$/',
-            '88'=>'/^088[0-9]{7}$/',
-            '89'=>'/^089[0-9]{7}$/'
-        ];
-        static $irishMobileAreasVoiceMail = [
-            '83'=>'/^0835[0-9]{7}$/',
-            '85'=>'/^0855[0-9]{7}$/',
-            '86'=>'/^0865[0-9]{7}$/',
-            '87'=>'/^0875[0-9]{7}$/',
-            '88'=>'/^0885[0-9]{7}$/',
-            '89'=>'/^0895[0-9]{7}$/'
-        ];
-        static $irishOtherRates = [
-            '1800'=>'/^1800[0-9]{6}$/',
-            '1850'=>'/^1850[0-9]{6}$/',
-            '1890'=>'/^1890[0-9]{6}$/'
-        ];
-
         $number = Validate_IE::normalisePhoneNumber($number);
 
         if (strlen(trim($number)) <= 0 || !ctype_digit($number)) {
             return false;
         }
         //area code must start with the standard 0 or a 1 for 'other rates'.
-        if (($requiredAreaCode) && !(preg_match("(^[01][0-9]*$)", $number))) {
+        if ($requiredAreaCode && !(preg_match("(^[01][0-9]*$)", $number))) {
             return false;
         }
         //check special rate numbers
-        if (($requiredAreaCode) && (substr($number, 0, 1) == '1')) {
-            return Validate_IE::specialRatePhoneNumber($number, $irishOtherRates);
+        if ($requiredAreaCode && (substr($number, 0, 1) == '1')) {
+            return Validate_IE::specialRatePhoneNumber($number);
         }
 
         $len = strlen($number);
 
         //if number has ten digits and a prefix it's likely a mobile phone
         if ($requiredAreaCode
-            && ($len == 10)
+            && $len == 10
             && Validate_IE::mobilePhoneNumber($number)
         ) {
             return true;
         }
         //see if it's a mobile phone with a 'direct to voicemail' prefix.
-        if (($requiredAreaCode)
-            && ($len == 11)
-            && Validate_IE::mobileVoiceMailNumber(
-                $number,
-                $irishMobileAreas
-            )
+        if ($requiredAreaCode
+            && $len == 11
+            && Validate_IE::mobileVoiceMailNumber($number)
         ) {
             return true;
         }
@@ -210,7 +156,7 @@ class Validate_IE
             if (preg_match($preg, $number)) {
                 return true;
             }
-        } elseif (Validate_IE::landlinePhoneNumber($number, $irishLandLine)) {
+        } elseif (Validate_IE::landlinePhoneNumber($number)) {
             return true;
         }
         return false;
@@ -240,13 +186,17 @@ class Validate_IE
     /**
      * Determine if a normalised phone number is for a special rate line.
      *
-     * @param string $number          Phone number
-     * @param array  $irishOtherRates Special Rates/Prefixes
+     * @param string $number Phone number
      *
      * @return void
      */
-    public function specialRatePhoneNumber($number, $irishOtherRates)
+    public function specialRatePhoneNumber($number)
     {
+        static $irishOtherRates = [
+            '1800'=>'/^1800[0-9]{6}$/',
+            '1850'=>'/^1850[0-9]{6}$/',
+            '1890'=>'/^1890[0-9]{6}$/'
+        ];
         $prefix = substr($number, 0, 4);
         if (isset($irishOtherRates[$prefix])) {
             return (preg_match($irishOtherRates[$prefix], $number));
@@ -257,13 +207,20 @@ class Validate_IE
     /**
      * Determine if a normalised phone number is for a mobile.
      *
-     * @param string $number           Phone number
-     * @param array  $irishMobileAreas Prefixes for mobiles
+     * @param string $number Phone number
      *
      * @return void
      */
-    public function mobilePhoneNumber($number, $irishMobileAreas)
+    public function mobilePhoneNumber($number)
     {
+        static $irishMobileAreas = [
+            '83'=>'/^083[0-9]{7}$/',
+            '85'=>'/^085[0-9]{7}$/',
+            '86'=>'/^086[0-9]{7}$/',
+            '87'=>'/^087[0-9]{7}$/',
+            '88'=>'/^088[0-9]{7}$/',
+            '89'=>'/^089[0-9]{7}$/'
+        ];
         $prefix = substr($number, 1, 2);
         if (isset($irishMobileAreas[$prefix])) {
             $regexp = $irishMobileAreas[$prefix];
@@ -275,13 +232,20 @@ class Validate_IE
     /**
      * Determine if a normalised phone number is for a voice mail (mobile)
      *
-     * @param string $number                    Phone number
-     * @param array  $irishMobileAreasVoiceMail Prefixes re voice mail.
+     * @param string $number Phone number
      *
      * @return bool
      */
-    public function mobileVoiceMailNumber($number, $irishMobileAreasVoiceMail)
+    public function mobileVoiceMailNumber($number)
     {
+        static $irishMobileAreasVoiceMail = [
+            '83'=>'/^0835[0-9]{7}$/',
+            '85'=>'/^0855[0-9]{7}$/',
+            '86'=>'/^0865[0-9]{7}$/',
+            '87'=>'/^0875[0-9]{7}$/',
+            '88'=>'/^0885[0-9]{7}$/',
+            '89'=>'/^0895[0-9]{7}$/'
+        ];
         $prefix = substr($number, 1, 2);
         if (isset($irishMobileAreasVoiceMail[$prefix])) {
             $regexp = $irishMobileAreasVoiceMail[$prefix];
@@ -295,14 +259,33 @@ class Validate_IE
     /**
      * Determine if a phone number is for a landline
      *
-     * @param string $number        Phone number
-     * @param array  $irishLandLine Irish land line prefixes
-     * @param string $defaultRegExp Default regular expression for landlines
+     * @param string $number Phone number
      *
      * @return void
      */
-    public function landlinePhoneNumber($number, $irishLandLine, $defaultRegExp)
+    public function landlinePhoneNumber($number)
     {
+        static $irishLandLine = [
+            '1'=>'/^01\d{7}$/',
+            '21'=>'', '22'=>'', '23'=>'', '24'=>'', '25'=>'', '242'=>'',
+            '225'=>'', '26'=>'', '27'=>'', '28'=>'', '29'=>'', '402'=>'',
+            '404'=>'', '405'=>'', '41'=>'', '42'=>'', '43'=>'', '44'=>'',
+            '45'=>'', '46'=>'', '47'=>'',
+            '48'=>'/^048[0-9]{8}$/', //direct dial to Northern Ireland
+            '49'=>'', '51'=>'', '52'=>'', '53'=>'', '54'=>'', '55'=>'',
+            '56'=>'', '57'=>'',
+            '58'=>'/^058[0-9]{5}$/',
+            '59'=>'/^059[0-9]{7}$/',
+            '502'=>'', '504'=>'',
+            '505'=>'/^0505[0-9]{5}$/',
+            '506'=>'', '509'=>'', '61'=>'', '62'=>'', '63'=>'', '64'=>'',
+            '65'=>'', '66'=>'', '67'=>'', '68'=>'', '69'=>'', '71'=>'',
+            '74'=>'',
+            '818'=>'/^0818[0-9]{6}$/',
+            '90'=>'', '91'=>'', '92'=>'', '93'=>'', '94'=>'', '95'=>'',
+            '96'=>'', '97'=>'', '98'=>'', '99'=>''
+        ];
+        static $defaultRegExp = '/^\d{7,10}$/';
         $ret = false;
         for ($i = 3; $i > 0; $i--) {
             $prefix = substr($number, 1, $i);

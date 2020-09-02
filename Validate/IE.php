@@ -598,7 +598,6 @@ class Validate_IE
         $preg = "/^[0-9]{7}[A-Z]{1,2}$/";
 
         if (preg_match($preg, $ppsn)) {
-            //return (true);
             return Validate_IE::checkMOD23($ppsn);
         }
 

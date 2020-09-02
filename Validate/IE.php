@@ -459,29 +459,41 @@ class Validate_IE
             }
             return true;
         }
-        //two pre-1987 codes are still in use. ZZ and ZV.
-        //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV
-        $regex = "/^ZZ[\ -]\d{5}$/";
-        if (preg_match($regex, $plate)) {
-            return true;
-        }
-        $regex = "/^ZV[\ -]\d{4,5}$/";
-        if (preg_match($regex, $plate)) {
-            return true;
-        }
-        return false;
+        return Validate_IE::pre1987licensePlate($plate);
     }
 
     /**
      * Is year between '87 and '12?
      *
-     * @param string $year
+     * @param string $year Year extracted from license plate
      *
      * @return bool
      */
     public function yearBetween87and12($year)
     {
         return ($year >= 87 || $year <= 12);
+    }
+
+    /**
+     * Is license plate a valid pre 1987 registration?
+     *
+     * @param string $number registration number/plate to validate
+     *
+     * @return bool
+     */
+    public function pre1987licensePlate($number)
+    {
+        //two pre-1987 codes are still in use. ZZ and ZV.
+        //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV
+        $regex = "/^ZZ[\ -]\d{5}$/";
+        if (preg_match($regex, $number)) {
+            return true;
+        }
+        $regex = "/^ZV[\ -]\d{4,5}$/";
+        if (preg_match($regex, $number)) {
+            return true;
+        }
+        return false;
     }
 
     /**

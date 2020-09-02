@@ -446,11 +446,11 @@ class Validate_IE
              * For years later than 2012, the segment is 3 digits in length.
              */
             if (strlen($matches[1]) === 2) {
-                $year = (int) $matches[1];
-                return ($year >= 87 || $year <= 12);
-            } elseif (strlen($matches[1]) == 3) {
+                return Validate_IE::yearBetween87and12((int) $matches[1]);
+            }
+            if (strlen($matches[1]) === 3) {
                 $year = (int) substr($matches[1], 0, 2);
-                if ($year >= 87 || $year <= 12) {
+                if (!Validate_IE::yearBetween87and12($year)) {
                     return false;
                 }
                 // The year segment, if 3 digits in length can only end
@@ -458,19 +458,30 @@ class Validate_IE
                 return in_array(substr($matches[1], 2, 1), ["1", "2"]);
             }
             return true;
-        } else {
-            //two pre-1987 codes are still in use. ZZ and ZV.
-            //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV
-            $regex = "/^ZZ[\ -]\d{5}$/";
-            if (preg_match($regex, $plate)) {
-                return true;
-            }
-            $regex = "/^ZV[\ -]\d{4,5}$/";
-            if (preg_match($regex, $plate)) {
-                return true;
-            }
-            return false;
         }
+        //two pre-1987 codes are still in use. ZZ and ZV.
+        //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV
+        $regex = "/^ZZ[\ -]\d{5}$/";
+        if (preg_match($regex, $plate)) {
+            return true;
+        }
+        $regex = "/^ZV[\ -]\d{4,5}$/";
+        if (preg_match($regex, $plate)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Is year between '87 and '12?
+     *
+     * @param string $year
+     *
+     * @return bool
+     */
+    public function yearBetween87and12($year)
+    {
+        return ($year >= 87 || $year <= 12);
     }
 
     /**

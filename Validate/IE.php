@@ -119,11 +119,11 @@ class Validate_IE
     {
         $number = Validate_IE::normalisePhoneNumber($number);
 
-        if (strlen(trim($number)) <= 0 || !ctype_digit($number)) {
-            return false;
-        }
-        //area code must start with the standard 0 or a 1 for 'other rates'.
-        if ($requiredAreaCode && !(preg_match("(^[01][0-9]*$)", $number))) {
+        // phone number must be valid, and area code must start with the
+        // standard 0 or a 1 for 'other rates'.
+        if ((strlen(trim($number)) <= 0 || !ctype_digit($number))
+            || ($requiredAreaCode && !(preg_match("(^[01][0-9]*$)", $number)))
+        ) {
             return false;
         }
         //check special rate numbers
@@ -423,45 +423,41 @@ class Validate_IE
 
         if (preg_match($regex, $plate, $matches)) {
             $mark = strtoupper($matches[2]);
-            //check valid index mark
+            // Check valid index mark
             $marks = ['C','CE','CN','CW','D','DL','G','KE','KK','KY','L',
-                           'LD','LH','LK','LM','LS','MH','MN','MO','OY','RN',
-                           'SO','T', 'TN','TS','W','WD','WH','WX','WW'];
-            if (in_array($mark, $marks)) {
-                // These were only used up to 2014.
-                if ('TS' === $mark
-                    || 'TN' === $mark
-                    || 'LK' === $mark
-                    || 'WD' === $mark
-                ) {
-                    return ((int) $matches[1] < 141);
-                }
-                // Introduced in 2014.
-                if ('T' === $mark) {
-                    return ((int) $matches[1] >= 141);
-                }
-
-                /*
-                 * Year Segment is 2 digits for 1987 to 2012.
-                 * For years later than 2012, the segment is 3 digits in length.
-                 */
-                if (strlen($matches[1]) == 2) {
-                    $year = (int) $matches[1];
-                    return ($year >= 87 || $year <= 12);
-                } elseif (strlen($matches[1]) == 3) {
-                    $year = (int) substr($matches[1], 0, 2);
-                    if ($year >= 87 || $year <= 12) {
-                        return false;
-                    } else {
-                        // The year segment, if 3 digits in length can only end
-                        // with a '1' or a '2'.
-                        $end  = (int) substr($matches[1], 2, 1);
-                        return ($end === 1) || ($end === 2);
-                    }
-                }
-                return true;
+                      'LD','LH','LK','LM','LS','MH','MN','MO','OY','RN',
+                      'SO','T', 'TN','TS','W','WD','WH','WX','WW'];
+            $marksUpTo2014 = ['TS', 'TN', 'L', 'LK', 'WD'];
+            $marksFrom2014 = ['T', 'L', 'W'];
+            if (!in_array($mark, $marks)) {
+                return false;
             }
-            return false;
+            // These were only used up to 2014.
+            if (in_array($mark, $marksUpTo2014)) {
+                return ((int) $matches[1] < 141);
+            }
+            // Introduced in 2014.
+            if (in_array($mark, $marksFrom2014)) {
+                return ((int) $matches[1] >= 141);
+            }
+
+            /*
+             * Year Segment is 2 digits for 1987 to 2012.
+             * For years later than 2012, the segment is 3 digits in length.
+             */
+            if (strlen($matches[1]) === 2) {
+                $year = (int) $matches[1];
+                return ($year >= 87 || $year <= 12);
+            } elseif (strlen($matches[1]) == 3) {
+                $year = (int) substr($matches[1], 0, 2);
+                if ($year >= 87 || $year <= 12) {
+                    return false;
+                }
+                // The year segment, if 3 digits in length can only end
+                // with a '1' or a '2'.
+                return in_array(substr($matches[1], 2, 1), ["1", "2"]);
+            }
+            return true;
         } else {
             //two pre-1987 codes are still in use. ZZ and ZV.
             //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV

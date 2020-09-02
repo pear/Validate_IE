@@ -19,6 +19,8 @@ $plates = array(
 'ZV-7258', //OK
 'ZV-8192', //OK
 'ZV-7654321', //NOK
+'89-L-1234', // OK
+'89-W-1234', // OK
 '98-KY-2655', //OK
 '06-D-2600', //OK
 '06-DE-2600', //NOK - DE index doesn't exist
@@ -30,9 +32,13 @@ $plates = array(
 '133-KY-23233', //NOK - first component with 3 digits may only end with a 1 or a 2.
 '06-TS-1234', // OK
 '141-TS-1234', // NOK - 'TS' not issued for 2014 or after.
+'141-LK-1234', // NOK - not issued for 2014 or after.
+'141-WD-1234', // NOK - not issued for 2014 or after.
 '98-T-1234', // NOK - 'T' is only issued for 2014 onwards
 '141-T-1234', // YES
+'141-L-1234', // YES
 '14-KY-2655', // NOK - for 2014, the year segment should be 3 segments.
+'143-L-1234', // NOK. 3 char long year, should only end in either 1 or 2
 );
 echo "\nTest License Plates\n";
 foreach ($plates as $plate) {
@@ -53,6 +59,8 @@ ZV-654321: NO
 ZV-7258: YES
 ZV-8192: YES
 ZV-7654321: NO
+89-L-1234: YES
+89-W-1234: NO
 98-KY-2655: YES
 06-D-2600: YES
 06-DE-2600: NO
@@ -64,6 +72,10 @@ ZV-7654321: NO
 133-KY-23233: NO
 06-TS-1234: YES
 141-TS-1234: NO
+141-LK-1234: NO
+141-WD-1234: NO
 98-T-1234: NO
 141-T-1234: YES
+141-L-1234: YES
 14-KY-2655: NO
+143-L-1234: NO

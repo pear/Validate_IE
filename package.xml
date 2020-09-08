@@ -39,7 +39,7 @@
  </stability>
  <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
  <notes>
-* Improve validation for licence plate registrations in relation to 3 digit year segments, index mark codes etc.
+* Improvements for compatibility with newer versions of PHP.
  </notes>
  <contents>
   <dir name="/">

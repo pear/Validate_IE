@@ -27,10 +27,10 @@
   <email>ken@linux.ie</email>
   <active>yes</active>
  </lead>
- <date>2018-02-22</date>
- <time>00:24:00</time>
+ <date>2020-09-08</date>
+ <time>22:29:00</time>
  <version>
-  <release>1.1.0</release>
+  <release>1.1.1</release>
   <api>1.0.1</api>
  </version>
  <stability>
@@ -78,6 +78,21 @@
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.1.1</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2020-09-08</date>
+   <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
+   <notes>
+* Improvements for compatibility with newer versions of PHP.
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.1.0</release>

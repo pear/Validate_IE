@@ -79,7 +79,6 @@ class Validate_IE
         return false;
     }
 
-
     /**
      * Validate an irish phone number
      *
@@ -122,7 +121,7 @@ class Validate_IE
         // phone number must be valid, and area code must start with the
         // standard 0 or a 1 for 'other rates'.
         if ((strlen(trim($number)) <= 0 || !ctype_digit($number))
-            || ($requiredAreaCode && !(preg_match("(^[01][0-9]*$)", $number)))
+            || ($requiredAreaCode && !(preg_match('(^[01][0-9]*$)', $number)))
         ) {
             return false;
         }
@@ -152,7 +151,7 @@ class Validate_IE
             //regular numbers, without an area code, don't start with a zero.
             //they may be 5-8 digits long (depending on area code which can
             //be 2-4 digits long...)
-            $preg = "/^[1-9]\d{4,7}$/";
+            $preg = '/^[1-9]\d{4,7}$/';
             if (preg_match($preg, $number)) {
                 return true;
             }
@@ -178,7 +177,7 @@ class Validate_IE
         //remove country code for Ireland and insert leading zero of area code.
         //presence of area code is implied if country code is present.
         if (strpos($number, '353') === 0) {
-            $number = "0" . substr($number, 3);
+            $number = '0' . substr($number, 3);
         }
         return $number;
     }
@@ -289,7 +288,7 @@ class Validate_IE
         $ret = false;
         for ($i = 3; $i > 0; $i--) {
             $prefix = substr($number, 1, $i);
-            $preg = "";
+            $preg = '';
             if (isset($irishLandLine[$prefix])) {
                 $preg = $irishLandLine[$prefix];
                 if ($preg === '') {
@@ -346,12 +345,12 @@ class Validate_IE
     {
         // Remove non alpha-numeric characters
         $code = preg_replace('/[^A-Z0-9]/', '', strtoupper($eircode));
-        if (strlen($code) != 7) {
+        if (strlen($code) !== 7) {
             return false;
         }
         $routing = substr($code, 0, 3);
         $identifier = substr($code, 3);
-        if ($dir != null && (is_file($dir . '/IE_EircodeRoutingKeys.txt'))) {
+        if ($dir !== null && (is_file($dir . '/IE_EircodeRoutingKeys.txt'))) {
             $file = $dir . '/IE_EircodeRoutingKeys.txt';
         } else {
             $file = '@DATADIR@/Validate_IE/data/IE_EircodeRoutingKeys.txt';
@@ -364,7 +363,7 @@ class Validate_IE
             return false;
         }
         // not included BGIJLMOQSUZ
-        $preg = "/^[AC-FHKNPRTV-Y0-9]{4}$/";
+        $preg = '/^[AC-FHKNPRTV-Y0-9]{4}$/';
         return preg_match($preg, $identifier);
     }
 
@@ -380,8 +379,8 @@ class Validate_IE
      */
     public function passport($pp)
     {
-        $pp   = strtolower($pp);
-        $preg = "/^[a-z]{2}[0-9]{7}$/";
+        $pp = strtolower($pp);
+        $preg = '/^[a-z]{2}[0-9]{7}$/';
 
         return (bool) preg_match($preg, $pp);
     }
@@ -399,7 +398,7 @@ class Validate_IE
     public function drive($dl)
     {
         $dl = str_replace([' ', '-'], '', $dl);
-        $preg  = "/^[0-9]{3}[0-9]{3}[0-9]{3}$/";
+        $preg  = '/^[0-9]{3}[0-9]{3}[0-9]{3}$/';
         return preg_match($preg, $dl) ? true : false;
     }
 
@@ -415,7 +414,7 @@ class Validate_IE
     {
         //in_array is case sensitive, so use strtoupper...
         $plate = strtoupper($number);
-        $regex = "/^(\d{2,3})[\ -]([A-Z][A-Z]?)[\ -]\d{1,6}$/";
+        $regex = '/^(\d{2,3})[\ -]([A-Z][A-Z]?)[\ -]\d{1,6}$/';
 
         if (preg_match($regex, $plate, $matches)) {
             $mark = strtoupper($matches[2]);
@@ -451,7 +450,7 @@ class Validate_IE
                 }
                 // The year segment, if 3 digits in length can only end
                 // with a '1' or a '2'.
-                return in_array(substr($matches[1], 2, 1), ["1", "2"]);
+                return in_array(substr($matches[1], 2, 1), ['1', '2']);
             }
             return true;
         }
@@ -481,11 +480,11 @@ class Validate_IE
     {
         //two pre-1987 codes are still in use. ZZ and ZV.
         //format is ZZ nnnnn - 5 digits for ZZ code and as few as 4 for ZV
-        $regex = "/^ZZ[\ -]\d{5}$/";
+        $regex = '/^ZZ[\ -]\d{5}$/';
         if (preg_match($regex, $number)) {
             return true;
         }
-        $regex = "/^ZV[\ -]\d{4,5}$/";
+        $regex = '/^ZV[\ -]\d{4,5}$/';
         return (bool) preg_match($regex, $number);
     }
 
@@ -518,10 +517,10 @@ class Validate_IE
     public function bankAC($ac, $noSort = false)
     {
         $ac   = str_replace(['-', ' '], '', $ac);
-        $preg = "/^\d{14}$/";
+        $preg = '/^\d{14}$/';
 
         if ($noSort) {
-            $preg = "/^\d{8}$/";
+            $preg = '/^\d{8}$/';
         }
 
         return preg_match($preg, $ac) ? true : false;
@@ -588,16 +587,13 @@ class Validate_IE
      */
     public function ppsn($ppsn)
     {
-        $preg = "/^[0-9]{7}[A-Z]{1,2}$/";
+        $preg = '/^[0-9]{7}[A-Z]{1,2}$/';
+        $preg2 = '/^[0-9]{7}[A-Z][\ WTX]?$/';
 
-        if (preg_match($preg, $ppsn)) {
+        if (preg_match($preg, $ppsn) || preg_match($preg2, $ppsn)) {
             return Validate_IE::checkMOD23($ppsn);
         }
 
-        $preg = "/^[0-9]{7}[A-Z][\ WTX]?$/";
-        if (preg_match($preg, $ppsn)) {
-            return Validate_IE::checkMOD23($ppsn);
-        }
         return false;
     }
 
@@ -636,7 +632,7 @@ class Validate_IE
         }
         if (preg_match('/^IE\d[a-z]\d{5}[a-z]$/i', $vat)) {
             $d = substr($vat, 2);
-            $new = "0" . substr($d, 2, 5) . substr($d, 0, 1) . substr($d, 7, 1);
+            $new = '0' . substr($d, 2, 5) . substr($d, 0, 1) . substr($d, 7, 1);
             return Validate_IE::checkMOD23($new);
         }
         return false;

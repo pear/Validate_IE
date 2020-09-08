@@ -66,12 +66,12 @@ class Validate_IE
     {
         if ($swift) {
             $swift = substr($swift, 0, 4);
-            if (substr($iban, 4, 4) != $swift) {
+            if (substr($iban, 4, 4) !== $swift) {
                 return false;
             }
         }
 
-        if (substr($iban, 0, 2) == 'IE') {
+        if (substr($iban, 0, 2) === 'IE') {
             include_once 'Validate/Finance/IBAN.php';
             return Validate_Finance_IBAN::validate($iban);
         }
@@ -127,7 +127,7 @@ class Validate_IE
             return false;
         }
         //check special rate numbers
-        if ($requiredAreaCode && (substr($number, 0, 1) == '1')) {
+        if ($requiredAreaCode && (substr($number, 0, 1) === '1')) {
             return Validate_IE::specialRatePhoneNumber($number);
         }
 
@@ -135,14 +135,14 @@ class Validate_IE
 
         //if number has ten digits and a prefix it's likely a mobile phone
         if ($requiredAreaCode
-            && $len == 10
+            && $len === 10
             && Validate_IE::mobilePhoneNumber($number)
         ) {
             return true;
         }
         //see if it's a mobile phone with a 'direct to voicemail' prefix.
         if ($requiredAreaCode
-            && $len == 11
+            && $len === 11
             && Validate_IE::mobileVoiceMailNumber($number)
         ) {
             return true;
@@ -193,9 +193,9 @@ class Validate_IE
     public function specialRatePhoneNumber($number)
     {
         static $irishOtherRates = [
-            '1800'=>'/^1800[0-9]{6}$/',
-            '1850'=>'/^1850[0-9]{6}$/',
-            '1890'=>'/^1890[0-9]{6}$/'
+            '1800' => '/^1800[0-9]{6}$/',
+            '1850' => '/^1850[0-9]{6}$/',
+            '1890' => '/^1890[0-9]{6}$/'
         ];
         $prefix = substr($number, 0, 4);
         if (isset($irishOtherRates[$prefix])) {
@@ -214,12 +214,12 @@ class Validate_IE
     public function mobilePhoneNumber($number)
     {
         static $irishMobileAreas = [
-            '83'=>'/^083[0-9]{7}$/',
-            '85'=>'/^085[0-9]{7}$/',
-            '86'=>'/^086[0-9]{7}$/',
-            '87'=>'/^087[0-9]{7}$/',
-            '88'=>'/^088[0-9]{7}$/',
-            '89'=>'/^089[0-9]{7}$/'
+            '83' => '/^083[0-9]{7}$/',
+            '85' => '/^085[0-9]{7}$/',
+            '86' => '/^086[0-9]{7}$/',
+            '87' => '/^087[0-9]{7}$/',
+            '88' => '/^088[0-9]{7}$/',
+            '89' => '/^089[0-9]{7}$/'
         ];
         $prefix = substr($number, 1, 2);
         if (isset($irishMobileAreas[$prefix])) {
@@ -239,12 +239,12 @@ class Validate_IE
     public function mobileVoiceMailNumber($number)
     {
         static $irishMobileAreasVoiceMail = [
-            '83'=>'/^0835[0-9]{7}$/',
-            '85'=>'/^0855[0-9]{7}$/',
-            '86'=>'/^0865[0-9]{7}$/',
-            '87'=>'/^0875[0-9]{7}$/',
-            '88'=>'/^0885[0-9]{7}$/',
-            '89'=>'/^0895[0-9]{7}$/'
+            '83' => '/^0835[0-9]{7}$/',
+            '85' => '/^0855[0-9]{7}$/',
+            '86' => '/^0865[0-9]{7}$/',
+            '87' => '/^0875[0-9]{7}$/',
+            '88' => '/^0885[0-9]{7}$/',
+            '89' => '/^0895[0-9]{7}$/'
         ];
         $prefix = substr($number, 1, 2);
         if (isset($irishMobileAreasVoiceMail[$prefix])) {
@@ -266,24 +266,24 @@ class Validate_IE
     public function landlinePhoneNumber($number)
     {
         static $irishLandLine = [
-            '1'=>'/^01\d{7}$/',
-            '21'=>'', '22'=>'', '23'=>'', '24'=>'', '25'=>'', '242'=>'',
-            '225'=>'', '26'=>'', '27'=>'', '28'=>'', '29'=>'', '402'=>'',
-            '404'=>'', '405'=>'', '41'=>'', '42'=>'', '43'=>'', '44'=>'',
-            '45'=>'', '46'=>'', '47'=>'',
-            '48'=>'/^048[0-9]{8}$/', //direct dial to Northern Ireland
-            '49'=>'', '51'=>'', '52'=>'', '53'=>'', '54'=>'', '55'=>'',
-            '56'=>'', '57'=>'',
-            '58'=>'/^058[0-9]{5}$/',
-            '59'=>'/^059[0-9]{7}$/',
-            '502'=>'', '504'=>'',
-            '505'=>'/^0505[0-9]{5}$/',
-            '506'=>'', '509'=>'', '61'=>'', '62'=>'', '63'=>'', '64'=>'',
-            '65'=>'', '66'=>'', '67'=>'', '68'=>'', '69'=>'', '71'=>'',
-            '74'=>'',
-            '818'=>'/^0818[0-9]{6}$/',
-            '90'=>'', '91'=>'', '92'=>'', '93'=>'', '94'=>'', '95'=>'',
-            '96'=>'', '97'=>'', '98'=>'', '99'=>''
+            '1' => '/^01\d{7}$/',
+            '21' => '', '22' => '', '23' => '', '24' => '', '25' => '', '242' => '',
+            '225' => '', '26' => '', '27' => '', '28' => '', '29' => '', '402' => '',
+            '404' => '', '405' => '', '41' => '', '42' => '', '43' => '', '44' => '',
+            '45' => '', '46' => '', '47' => '',
+            '48' => '/^048[0-9]{8}$/', //direct dial to Northern Ireland
+            '49' => '', '51' => '', '52' => '', '53' => '', '54' => '', '55' => '',
+            '56' => '', '57' => '',
+            '58' => '/^058[0-9]{5}$/',
+            '59' => '/^059[0-9]{7}$/',
+            '502' => '', '504' => '',
+            '505' => '/^0505[0-9]{5}$/',
+            '506' => '', '509' => '', '61' => '', '62' => '', '63' => '', '64' => '',
+            '65' => '', '66' => '', '67' => '', '68' => '', '69' => '', '71' => '',
+            '74' => '',
+            '818' => '/^0818[0-9]{6}$/',
+            '90' => '', '91' => '', '92' => '', '93' => '', '94' => '', '95' => '',
+            '96' => '', '97' => '', '98' => '', '99' => ''
         ];
         static $defaultRegExp = '/^\d{7,10}$/';
         $ret = false;
@@ -292,7 +292,7 @@ class Validate_IE
             $preg = "";
             if (isset($irishLandLine[$prefix])) {
                 $preg = $irishLandLine[$prefix];
-                if ($preg == '') {
+                if ($preg === '') {
                     $preg = $defaultRegExp;
                 }
                 if (preg_match($preg, $number)) {
@@ -383,11 +383,7 @@ class Validate_IE
         $pp   = strtolower($pp);
         $preg = "/^[a-z]{2}[0-9]{7}$/";
 
-        if (preg_match($preg, $pp)) {
-            return true;
-        }
-
-        return false;
+        return (bool) preg_match($preg, $pp);
     }
 
     /**
@@ -402,7 +398,7 @@ class Validate_IE
      */
     public function drive($dl)
     {
-        $dl    = str_replace([' ', '-'], '', $dl);
+        $dl = str_replace([' ', '-'], '', $dl);
         $preg  = "/^[0-9]{3}[0-9]{3}[0-9]{3}$/";
         return preg_match($preg, $dl) ? true : false;
     }
@@ -490,10 +486,7 @@ class Validate_IE
             return true;
         }
         $regex = "/^ZV[\ -]\d{4,5}$/";
-        if (preg_match($regex, $number)) {
-            return true;
-        }
-        return false;
+        return (bool) preg_match($regex, $number);
     }
 
     /**
@@ -569,7 +562,7 @@ class Validate_IE
             $total += (int) $value[$i] * (8 - $i);
         }
 
-        if ($len == 9) {
+        if ($len === 9) {
             $total += (ord($value[8]) - 64) * 9;
         }
 
@@ -578,7 +571,7 @@ class Validate_IE
             $mod = 23;
         }
 
-        return (int) (chr(64 + $mod) == strtoupper($value[7]));
+        return (int) (chr(64 + $mod) === strtoupper($value[7]));
     }
 
     /**
@@ -642,7 +635,7 @@ class Validate_IE
             return Validate_IE::checkMOD23(substr($vat, 2));
         }
         if (preg_match('/^IE\d[a-z]\d{5}[a-z]$/i', $vat)) {
-            $d   = substr($vat, 2);
+            $d = substr($vat, 2);
             $new = "0" . substr($d, 2, 5) . substr($d, 0, 1) . substr($d, 7, 1);
             return Validate_IE::checkMOD23($new);
         }
